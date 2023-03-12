@@ -11,7 +11,11 @@ const admin = require("firebase-admin") ;
 
 const app = express()
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://odd-gold-squid-robe.cyclic.app', "*"],
+  credentials: true
+}));
 
 const PORT = process.env.PORT || 5000;
 
