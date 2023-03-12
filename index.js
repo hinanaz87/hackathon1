@@ -18,8 +18,9 @@ const PORT = process.env.PORT || 5000;
  const Product = require("./schemas/Product")
  const User = require("./schemas/User")
 
-
-let dbURI = "mongodb://127.0.0.1:27017/hackathon";
+// mongoose.connect("mongodb+srv://admin:admin@cluster0.fhb0ddn.mongodb.net/test")
+// let dbURI = "mongodb://127.0.0.1:27017/hackathon";
+let dbURI = "mongodb+srv://admin:admin@cluster0.fhb0ddn.mongodb.net/hackathon";
 mongoose.connect(dbURI);
 
 mongoose.connection.on('connected', function(){
@@ -257,131 +258,25 @@ app.put('/editproduct/:id', async (req,res)=>{
   res.send(result)
  })
 
+// ------------SEARCH BY CATEGORY----------------
+
+app.get("/search/:key", async (req,res)=>{
+  let result = await Product.find({
+    "$or": [
+      {productCategory: { $regex: req.params.key}}
+    ]
+  });
+  res.send(result)
+})
 
 
 
-
-// //-----------------ALL PRODUCTS API------------
-// app.get("/products", async (req,res) =>{
-//   let result = await Product.find().exec().catch(e =>{
-//     console.log("error in db: ", e);
-//     res.status(500).send({message:"error in getting all Products"})
-//     return
-//   })
-//   res.send({
-//     message:"all products are received successfully",
-//     data: result
-//   });
-// });
-
-// ---------------POST API BY CHAT GPT------------------
-// app.get("/products", async (req, res) => {
-//   try {
-//     let result = await Product.find().exec();
-//     res.send({
-//       message: "All products are received successfully",
-//       data: result,
-//     });
-//   } catch (e) {
-//     console.log("Error in db: ", e);
-//     res.status(500).send({ message: "Error in getting all products" });
-//   }
-// });
-
-// -------------------ADDING PRODUCT WITHOUT IMAGE---------------
-// app.post('/product', async (req,res)=>{
-
-// let body = req.body;
-
-// if(
-//     !body.productName
-//     || !body.productDescription
-//     || !body.productPrice
-//     || !body.currencyCode
-//     || !body.isFreeShipping
-//     || !body.shopName
-    
-// ){
-
-//     res.status(400).send({
-//         message:`required field is missing, all fields are required:
-//         productName
-//         productDescription
-//         productPrice
-//         currencyCode
-//         isFreeShipping
-//         shopName
-//         `
-//     })
-//     return;
-// }
-//  let result = await Product.create({
-
-//     productName :body.productName,
-//     productDescription :body.productDescription,
-//     productPrice :body.productPrice,
-//     currencyCode :body.currencyCode,
-//     isFreeShipping :body.isFreeShipping,
-//     shopName :body.shopName,
-//     userId :body.userid
-
-//  }).catch (e=>{
-//     console.log("error in db: ", e);
-//     res.status(500).send("db error in saving product")
-//  })
-//  console.log("result", result);
-//  res.send({message: "product is added in database"})
-// })
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`)
 })
 
 
-// // ----------VIEW PRODUCTS BASED ON USER ID------------------
-
-// app.get("/products/:id",  async(req,res)=>{
-//   Product.find({userid:req.params.id})
-//   .then(productsfound =>{
-//       if(!productsfound){
-//           return res.status(404).end(); 
-//         console.log(res)
-//       }
-//           return res.status(200).json(productsfound);
-//   })
-//   .catch(err=> next(err));
-// })
-
-//------------------GET SINGLE PRODUCT----------------
-// app.get("/product/:id", async (req,res) =>{
-//   let result = await Product.findOne({_id:req.params.id}).exec().catch(e =>{
-//     console.log("error in db: ", e);
-//     res.status(500).send({message:"error in getting a Product"})
-//     return
-//   })
-//   res.send({
-//     message:"product is received successfully",
-//     data: result
-//   });
-// });
-
-
-// -----------------UPDATE PRODUCT API------------
-
-// app.put('/product/:id', async (req, res) => {
-//   try {
-//     const result = await Product.updateOne(
-//       { _id: req.params.id },
-//       { $set: req.body }
-//     );
-//     if (result.nModified === 0) {
-//       return res.status(404).send({ error: 'Product not found' });
-//     }
-//     res.send(result);
-//   } catch (err) {
-//     res.status(500).send({ error: err.message });
-//   }
-// });
 
 // -----------------USER REGISTER API -------------
 
@@ -457,199 +352,20 @@ app.get("/profile/:id", async (req,res) =>{
   });
 });
 
-// ------------------EDIT USER----------------
+// -------------TOKEN VARIFICATION------------------
 
-// app.put('/profile/:id', async (req, res) => {
-//   try {
-//     const result = await User.updateOne(
-//       { _id: req.params.id },
-//       { $set: req.body }
-//     );
-//     if (result.nModified === 0) {
-//       return res.status(404).send({ error: 'User not found' });
-//     }
-//     res.send(result);
-//   } catch (err) {
-//     res.status(500).send({ error: err.message });
-//   }
-// });
-
-// const express = require("express");
-// const cors = require("cors");
-// const mongoose = require("mongoose");
-// const bcrypt = require('bcrypt');
-// const Jwt = require("jsonwebtoken");
-// const jwtKey = "e-comm"
-
-//  require('./db/config');
- 
-// //  const Student = require("./db/Student");
-//  const Admin = require("./db/Admin");
-// //  const Course = require("./db/Course");
-// //  const Attendance = require("./db/Attendance");
-
-// // const User = require("./db/User")
-// // const Product = require("./db/Products")
-// const app = express();
-
-// app.use(express.json());
-// app.use(cors());
-// app.get("/", (req,res)=>{
-//     res.send("Hello from backend coming YAHOO");
-//     console.log("app is running on port 8000")
-// });
-
-// const connectDB = async ()=>{
-//     mongoose.set("strictQuery", false);
-//     mongoose.connect("mongodb://localhost:27017/attendanceSystem");
-//     // mongoose.connect("mongodb+srv://admin:admin@cluster0.fhb0ddn.mongodb.net/test")
-//     console.log("batabase connected")
-// }
-// connectDB();
-
-
-
-
-// app.post('/register', async (req, res) => {
-  
-  
-//     // Check if admin already exists in the database
-//     const existingAdmin = await Admin.findOne({ email: req.body.email });
-//     if (existingAdmin) {
-//       return res.status(409).send('Admin already exists');
-//     }
-  
-  
-   
-//     try {
-//         let admin = new Admin(req.body);
-        
-//         let result = await admin.save();
-//         result = result.toObject();
-//         delete result.password
-//         delete result.confirmpassword
-//         // res.send(result);
-//         Jwt.sign({result}, jwtKey, {expiresIn:"2h"}, (err, token) =>{
-//           if(err) {
-//             res.send({result:"Something went wrong, Please try again after some time"})
-//           }res.send({result, auth:token})
-//         })
-    
-    
-//     } catch (err) {
-//       res.status(400).send(err.message);
-//     }
-//   });
-
-
-// // ----------API FOR LOGIN ADMIN --------------
-// // THIS IS CORRECT AND WORKING BUT WITHOUT HASH
-// // app.post("/login", async (req, res) =>{
-// //     console.log(req.body)
-// //     if(req.body.password && req.body.email){
-// //         let admin = await Admin.findOne(req.body).select("-password");
-// //         if(admin){
-// //             res.send(admin)
-// //         } else{
-// //             res.send({result: "No Admin Found"})
-// //         }
-// //      } else{
-// //             res.send({result:" No Admin Found"})
-// //         }
-// //     }
-// // )
-
-
-// // app.post("/login", async (req, res) =>{
-// //     Admin.findOne( { email: req.body.email } , (err, admin) => {
-// //         if (err) {
-// //           // Handle error
-// //           return res.status(500).send(err);
-// //         }
-    
-// //         if (!admin) {
-// //           // User not found
-// //           return res.status(401).send({message :'Invalid username or password' });
-// //         }
-    
-// //         // Compare the user's input password with the stored hashed password
-// //         bcrypt.compare(req.body.password, admin.password, (err, result) => {
-// //           if (err) {
-// //             // Handle error
-// //             return res.status(500).send(err);
-// //           }
-    
-// //           if (result) {
-// //             // Login successful
-// //             // Set session or JWT token here
-// //             Jwt.sign({result}, jwtKey, {expiresIn:"2h"}, (err, token) =>{
-// //               if(err) {
-// //                 res.send({result:"Something went wrong, Please try again after some time"})
-// //               }res.send({admin, auth:token})
-// //             })
-// //             // return res.status(200).send( admin);
-// //           } else {
-// //             // Login failed
-// //             return res.status(401).send({message :'Invalid username or password' });
-// //           }
-// //         });
-// //       }) 
-// // })
-
-// app.post("/login", async (req, res) =>{
-//   try {
-//     const admin = await Admin.findOne({ email: req.body.email });
-//     if (!admin) {
-//       return res.status(401).send({message: 'Invalid username or password'});
-//     }
-    
-//     const result = await bcrypt.compare(req.body.password, admin.password);
-//     if (result) {
-//       const token = await Jwt.sign({result}, jwtKey, {expiresIn:"2h"});
-//       res.send({admin :{
-//         email:admin.email,
-//         fullname:admin.fullname,
-//         username:admin.username
-//       }, auth: token});
-//     } else {
-//       return res.status(401).send({message :'Invalid username or password' });
-//     }
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).send(err);
-//   }
-// });
-
-// // ---------------SINGLE USER API------------
-
-// app.get("/user/:id", async(req,res)=>{
-//   try{
-// let user = await Admin.findOne({_id: req.params.id}).exec();
-// res.send(user);
-
-//   }catch(error){
-//     res.status(500).send({message: "error getting user"})
-
-//   }
-// })
-
-// // -------------TOKEN VARIFICATION------------------
-
-// function verifyToken(req,res,next){
-//   let token = req.headers['authorization'];
-//   if(token){
-//     token = token.split(" ")[1];
-//     Jwt.verify(token, jwtKey,(err, valid) =>{
-//       if(err){
-//         res.status(401).send({result:"Please provide valid token"})
-//       } else {
-//         next();
-//       }
-//     })
-//   } else {
-//     res.status(403).send({result:"Please add token with Header"})
-//   }
-// }
-
-
-// app.listen(5000)
+function verifyToken(req,res,next){
+  let token = req.headers['authorization'];
+  if(token){
+    token = token.split(" ")[1];
+    Jwt.verify(token, jwtKey,(err, valid) =>{
+      if(err){
+        res.status(401).send({result:"Please provide valid token"})
+      } else {
+        next();
+      }
+    })
+  } else {
+    res.status(403).send({result:"Please add token with Header"})
+  }
+}
