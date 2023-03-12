@@ -13,8 +13,8 @@ const app = express()
 app.use(express.json());
 // app.use(cors());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://odd-gold-squid-robe.cyclic.app', "*"],
-  credentials: true
+  origin: ['http://localhost:3000', 'https://odd-gold-squid-robe.cyclic.app',"https://hackathon-hina-naz.netlify.app", "*"],
+  
 }));
 
 const PORT = process.env.PORT || 5000;
